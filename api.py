@@ -41,9 +41,8 @@ def check_ip_reputation(ip: str, x_key: str = Header(None)):
         if x_key != api_key:
             return {"error": "Invalid API key"}
         
-        # Replace 'YOUR_API_KEY' with your actual AbuseIPDB API key
         response = requests.get(f"https://api.abuseipdb.com/api/v2/check?ipAddress={ip}", 
-                                headers={"Key": "44537bf504d736ece21c79b60c23a8bb2254d1508e255501d29139194b0fd4774074afed10c5192e", 
+                                headers={"Key": api_key, 
                                          "Accept": "application/json"})
         data = response.json()
         return data
