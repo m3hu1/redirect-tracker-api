@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import requests
 import os
 
-api_key = os.getenv("API_KEY")
+api_key = os.environ.get('API_KEY')
 
 app = FastAPI()
 
