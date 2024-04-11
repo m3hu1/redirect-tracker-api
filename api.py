@@ -1,5 +1,5 @@
-#/api/api.py
-from fastapi import FastAPI, Header
+# /api/api.py
+from fastapi import FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import requests
 
