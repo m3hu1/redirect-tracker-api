@@ -1,7 +1,8 @@
 #/api/api.py
-from fastapi import FastAPI, Header, UploadFile, File
+from fastapi import FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import requests
+from io import BytesIO
 
 app = FastAPI()
 
@@ -46,21 +47,25 @@ def check_ip_reputation(ip: str, x_key: str = Header(None)):
     except Exception as e:
         return {"error": str(e)}
 
-@app.post("/check-file")
-async def check_file(file: UploadFile = File(...), x_key: str = Header(None)):
+@app.post("/check-url")
+async def check_url(url: str, x_key: str = Header(None)):
     try:
         if x_key != "YOUR_API_KEY":
-            return {"error": "Invalid API key"}
+            raise HTTPException(status_code=401, detail="Invalid API key")
 
-        # Make sure to replace "YOUR_API_KEY" with your actual VirusTotal API key
-        url = "https://www.virustotal.com/api/v3/files"
+        response = requests.get(url)
+        if response.status_code != 200:
+            raise HTTPException(status_code=400, detail="Failed to download file from URL")
+
+        file_data = BytesIO(response.content)
+        files = {"file": ("filename", file_data)}
+
         headers = {
             "x-apikey": "04b608018caed843361d911f92413804b38f07f83e68d404661047fd90840c04",
         }
-        files = {"file": await file.read()}
 
-        response = requests.post(url, files=files, headers=headers)
-        data = response.json()
-        return data
+        vt_response = requests.post("https://www.virustotal.com/api/v3/files", headers=headers, files=files)
+        return vt_response.json()
+    
     except Exception as e:
-        return {"error": str(e)}
+        raise HTTPException(status_code=500, detail=str(e))
