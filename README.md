@@ -1,3 +1,3 @@
-# Redirect Tracker API (FastAPI)
+# APIs used in Qaution (FastAPI)
 
->The redirect tracking api used in [Qaution](https://github.com/m3hu1/qaution).
+> All the APIs used in [Qaution](https://github.com/m3hu1/qaution).
