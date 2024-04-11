@@ -1,5 +1,5 @@
 #/api/api.py
-from fastapi import FastAPI, Header
+from fastapi import FastAPI, Header, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 import requests
 
@@ -41,6 +41,25 @@ def check_ip_reputation(ip: str, x_key: str = Header(None)):
         response = requests.get(f"https://api.abuseipdb.com/api/v2/check?ipAddress={ip}", 
                                 headers={"Key": "44537bf504d736ece21c79b60c23a8bb2254d1508e255501d29139194b0fd4774074afed10c5192e", 
                                          "Accept": "application/json"})
+        data = response.json()
+        return data
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.post("/check-file")
+async def check_file(file: UploadFile = File(...), x_key: str = Header(None)):
+    try:
+        if x_key != "YOUR_API_KEY":
+            return {"error": "Invalid API key"}
+
+        # Make sure to replace "YOUR_API_KEY" with your actual VirusTotal API key
+        url = "https://www.virustotal.com/api/v3/files"
+        headers = {
+            "x-apikey": "04b608018caed843361d911f92413804b38f07f83e68d404661047fd90840c04",
+        }
+        files = {"file": await file.read()}
+
+        response = requests.post(url, files=files, headers=headers)
         data = response.json()
         return data
     except Exception as e:
